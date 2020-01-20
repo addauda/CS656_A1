@@ -40,7 +40,7 @@ const negotiate = (server_address, n_port, req_code, callback) => {
 		let r_port = parseInt(data);
 		
 		//if port is successfully parsed, pass port to callback then disconnect TCP client
-		(r_port) && callback(r_port); client.destroy();
+		(r_port) && (callback) && callback(r_port); client.destroy();
 	});
 
 	//send request code to TCP server
