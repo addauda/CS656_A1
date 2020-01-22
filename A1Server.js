@@ -1,5 +1,6 @@
 const net = require('net');
 const dgram = require('dgram');
+const fs = require('fs');
 
 class A1Server {
 	constructor(req_code) {
@@ -14,12 +15,12 @@ class A1Server {
 				//event handler for when socket recieves data
 				socket.on('data', (data) => {
 					//parse data as integer request code
-					let parsedCode = parseInt(data);
+					let parsed_code = parseInt(data);
 
 					//verify code against server request code
 					//if false - close socket with message
 					//else - begin UDP transaction stage
-					(!parsedCode || parsedCode !== this.req_code) 
+					(!parsed_code || parsed_code !== this.req_code) 
 						? socket.end('Bad Request Code\n')
 						: this.initUDPTrans((port) => { //define callback function to get transaction stage port number
 							socket.end(`${port}\n`); 
@@ -35,7 +36,17 @@ class A1Server {
 		//binds server to any available port and all network interfaces on host
 		const listen = () => {
 			server.listen(() => {
-				console.log(`SERVER_PORT=${server.address().port}`);
+				let n_port_notif = `SERVER_PORT=${server.address().port}`;
+
+				//log n_port to console
+				console.log(n_port_notif);
+
+				//write n_port to file
+				fs.writeFile('port.txt', n_port_notif, function (err) {
+					if (err) { 
+						throw err; 
+					};
+				});
 			});
 		}
 
